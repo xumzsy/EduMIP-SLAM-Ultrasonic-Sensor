@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="edumip_my_robot">
+<xacro:property name="wheel_separation" value="0.070" />
+<xacro:property name="wheel_radius" value="0.034" />
+<xacro:property name="wheel_width" value="0.010" />
+<xacro:property name="body_height" value="0.1" />
+<xacro:property name="body_width" value="0.050" />
+<xacro:property name="body_length" value="0.035" /> 
+
+<material name="red">
+  <color rgba=".8 0 0 1"/>
+</material>
+
+<material name="blue">
+  <color rgba="0 0 .8 1"/>
+</material>
+
+<material name="green">
+  <color rgba="0 .8 0 1"/>
+</material>
+
+  <link name="edumip_body">
+    <visual>
+      <geometry>
+        <box size="${body_width} ${body_length} ${body_height}"/>
+      </geometry>
+      <material name="green"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </visual>
+  </link>
+
+  <link name="wheelL">
+    <visual>
+      <geometry>
+        <cylinder length="${wheel_width}" radius="${wheel_radius}"/>
+      </geometry>
+      <material name="red"/>
+      <origin rpy="0 1.57075 0" xyz="-${wheel_separation/2} 0 0}"/>
+    </visual>
+  </link>
+
+  <link name="wheelR">
+    <visual>
+      <geometry>
+        <cylinder length="${wheel_width}" radius="${wheel_radius}"/>
+      </geometry>
+      <material name="blue"/>
+      <origin rpy="0 -1.57075 0" xyz="${wheel_separation/2} 0 0}"/>
+    </visual>
+  </link>
+
+  <link name="range_finder">
+    <visual>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+      <material name="red"/>
+      <origin rpy="0 0 1.57075" xyz="0 0 ${body_height/2}"/>
+    </visual>
+  </link>
+
+  <joint name="RangeFix" type="fixed">
+    <parent link="edumip_body"/>
+    <child link="range_finder"/>
+    <origin xyz="0 0 0"/>
+  </joint>
+
+  <joint name="jointL" type="continuous">
+    <parent link="edumip_body"/>
+    <child link="wheelL"/>
+    <origin xyz="-${wheel_separation/2-wheel_width/2} 0 -${body_height/2}"/>
+    <axis xyz="-1 0 0"/>
+  </joint>
+
+  <joint name="jointR" type="continuous">
+    <parent link="edumip_body"/>
+    <child link="wheelR"/>
+    <origin xyz="${wheel_separation/2-wheel_width/2} 0 -${body_height/2}"/>
+    <axis xyz="-1 0 0"/>   
+  </joint>
+
+  
+
+
+</robot>

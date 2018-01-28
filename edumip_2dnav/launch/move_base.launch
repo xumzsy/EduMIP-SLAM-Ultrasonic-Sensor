@@ -1,0 +1,51 @@
+<launch>
+
+  <!-- Map server -->
+  <arg name="map_file" default="/home/turtlebot/May11.yaml"/>
+  <!--node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" /-->
+
+  <!-- AMCL or fake_localization-->
+  <arg name="odom_frame_id"   default="odom"/>
+  <arg name="base_frame_id"   default="edumip_body"/>
+  <arg name="global_frame_id" default="map"/>
+  <arg name="odom_topic" default="odom" />
+  <arg name="scan_topic" default="scan" />
+  <arg name="initial_pose_x" default="0.0"/> 
+  <arg name="initial_pose_y" default="0.0"/> 
+  <arg name="initial_pose_a" default="0.0"/>
+  <node name="fake_localization" pkg="fake_localization" type="fake_localization" respawn="false">
+    <param name="base_frame_id" value="edumip_body" />
+    <remap from="base_pose_ground_truth" to="odom" />
+  </node>
+
+  <!-- Move Base -->
+  <arg name="laser_topic" default="scan" />
+
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <remap from="/cmd_vel" to="edumip/cmd" />
+    <rosparam file="$(find edumip_2dnav)/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find edumip_2dnav)/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find edumip_2dnav)/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find edumip_2dnav)/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find edumip_2dnav)/base_local_planner_params.yaml" command="load" />
+  </node>
+
+    <param name="global_costmap/global_frame" value="$(arg global_frame_id)"/>
+    <param name="global_costmap/robot_base_frame" value="$(arg base_frame_id)"/>
+    <param name="local_costmap/global_frame" value="$(arg odom_frame_id)"/>
+    <param name="local_costmap/robot_base_frame" value="$(arg base_frame_id)"/>
+    <param name="DWAPlannerROS/global_frame_id" value="$(arg odom_frame_id)"/>
+
+
+    <remap from="odom" to="$(arg odom_topic)"/>
+    <remap from="scan" to="$(arg laser_topic)"/>
+</launch>
+
+
+
+
+
+
+
+
+
